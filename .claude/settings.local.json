@@ -13,7 +13,12 @@
       "Bash(git -C /c/Projects/hachiko add src/messages.js tests/messages.test.js)",
       "Bash(git -C:*)",
       "Bash(node:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(cd:*)",
+      "Bash(\"C:/Projects/hachiko/.env\":*)",
+      "Bash(gh api:*)",
+      "Bash(curl:*)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f''''exists: {bool\\(d.get\\(id\\)\\)}, private: {d.get\\(private\\)}, branch: {d.get\\(default_branch\\)}''''\\)\")"
     ]
   }
 }
