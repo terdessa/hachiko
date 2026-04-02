@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/terdessa/hachiko#readme",
   "dependencies": {
+    "@octokit/auth-app": "^8.2.0",
+    "@octokit/rest": "^22.0.1",
     "@slack/bolt": "^4.6.0",
     "dotenv": "^17.4.0",
     "openai": "^6.33.0"
