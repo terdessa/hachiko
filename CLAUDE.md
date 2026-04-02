@@ -60,3 +60,55 @@ demo-site/
 - Deterministic execution: the edit is hardcoded for the demo, not a general-purpose code editor
 - All bot replies stay in the originating Slack thread
 - Duplicate execution prevention per thread
+
+## Agent Workflow
+
+- Use a **multi-agent system**: dispatch parallel subagents for independent tasks and invoke skills (`brainstorming`, `senior-backend`, `test-driven-development`, `systematic-debugging`, etc.) when applicable.
+- **All commands allowed** — bash, npm, git, file writes, edits. No permission-asking for standard operations.
+- **Don't stop early.** Every task in the plan must be completed, verified, and running before marking done.
+- **Before building, ask clarifying questions** about pipeline understanding and architecture decisions. Do not write code until the user confirms.
+
+## Model Usage
+
+- **Opus** — architecture decisions, complex integration logic, classifier design, state machine implementation, debugging
+- **Sonnet** — scaffolding, boilerplate, config files, simple file writes, message templates, dependency installation, straightforward CRUD tasks
+
+## Branch Strategy & Merge Guide
+
+Three teammates work on separate branches against `main`:
+
+| Person | Branch | Owns |
+|--------|--------|------|
+| Person 1 (Mykyta) | `mykyta-dev` | Slack flow, classifier, confirmation, `src/app.js` |
+| Person 2 | (their own branch) | GitHub pipeline, `createPriceUpdatePR()` function |
+| Person 3 | (their own branch) | Demo docs, submission materials |
+
+### How to merge Person 2 into Person 1
+
+Person 1 uses a stub at `src/github-stub.js`. When Person 2's branch is ready:
+
+1. Merge Person 2's branch into `mykyta-dev` (or both into `main`)
+2. In `src/app.js`, replace the stub import:
+   ```js
+   // BEFORE:
+   const { createPriceUpdatePR } = require('./github-stub');
+   // AFTER:
+   const { createPriceUpdatePR } = require('./github-pipeline');
+   ```
+3. Person 2's function **must** match this contract:
+   ```js
+   async function createPriceUpdatePR({ oldPrice, newPrice })
+   // Returns: { prUrl: string, prNumber: number, branchName: string, summary: string }
+   // Throws on failure
+   ```
+4. Run `npx jest --verbose` to confirm nothing broke
+5. Do an E2E test in Slack to verify the full flow
+
+### Conflict-prone files
+
+- `package.json` / `package-lock.json` — both branches will modify these. Accept both deps, then `npm install` to regenerate lock file.
+- `src/app.js` — only Person 1 should own this file. Person 2 exports a function, Person 1 imports it.
+
+### Implementation Plans
+
+- Person 1: `docs/superpowers/plans/2026-04-02-person-1-slack-flow.md`

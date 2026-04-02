@@ -1,5 +1,5 @@
 const { App } = require('@slack/bolt');
-const Anthropic = require('@anthropic-ai/sdk');
+const OpenAI = require('openai');
 const config = require('./config');
 const { classifyMessage } = require('./classifier');
 const { ThreadStateManager } = require('./confirmation');
@@ -12,7 +12,7 @@ const app = new App({
   socketMode: true,
 });
 
-const anthropic = new Anthropic({ apiKey: config.anthropicApiKey });
+const openai = new OpenAI({ apiKey: config.openaiApiKey });
 const stateManager = new ThreadStateManager();
 
 // Listen to all messages in the configured channel
@@ -59,7 +59,7 @@ app.message(async ({ message, say }) => {
   }
 
   // Top-level message — classify it
-  const classification = await classifyMessage(anthropic, message.text);
+  const classification = await classifyMessage(openai, message.text);
   if (!classification) return;
 
   stateManager.startConfirmation(message.ts, classification);

@@ -1,26 +1,28 @@
 const { classifyMessage } = require('../src/classifier');
 
-// Mock the Anthropic SDK
-jest.mock('@anthropic-ai/sdk', () => {
+// Mock the OpenAI SDK
+jest.mock('openai', () => {
   return jest.fn().mockImplementation(() => ({
-    messages: {
-      create: jest.fn(),
+    chat: {
+      completions: {
+        create: jest.fn(),
+      },
     },
   }));
 });
 
-const Anthropic = require('@anthropic-ai/sdk');
+const OpenAI = require('openai');
 
 describe('classifyMessage', () => {
   let mockClient;
 
   beforeEach(() => {
-    mockClient = new Anthropic();
+    mockClient = new OpenAI();
   });
 
   test('detects price change and extracts prices', async () => {
-    mockClient.messages.create.mockResolvedValue({
-      content: [{ type: 'text', text: '{"isPriceChange": true, "oldPrice": 15, "newPrice": 20}' }],
+    mockClient.chat.completions.create.mockResolvedValue({
+      choices: [{ message: { content: '{"isPriceChange": true, "oldPrice": 15, "newPrice": 20}' } }],
     });
 
     const result = await classifyMessage(
@@ -32,8 +34,8 @@ describe('classifyMessage', () => {
   });
 
   test('returns null for casual chat', async () => {
-    mockClient.messages.create.mockResolvedValue({
-      content: [{ type: 'text', text: '{"isPriceChange": false}' }],
+    mockClient.chat.completions.create.mockResolvedValue({
+      choices: [{ message: { content: '{"isPriceChange": false}' } }],
     });
 
     const result = await classifyMessage(mockClient, 'hey team, lunch at noon?');
@@ -41,8 +43,8 @@ describe('classifyMessage', () => {
   });
 
   test('returns null if LLM response is malformed', async () => {
-    mockClient.messages.create.mockResolvedValue({
-      content: [{ type: 'text', text: 'not json' }],
+    mockClient.chat.completions.create.mockResolvedValue({
+      choices: [{ message: { content: 'not json' } }],
     });
 
     const result = await classifyMessage(mockClient, 'some message');
@@ -50,7 +52,7 @@ describe('classifyMessage', () => {
   });
 
   test('returns null if LLM call fails', async () => {
-    mockClient.messages.create.mockRejectedValue(new Error('API error'));
+    mockClient.chat.completions.create.mockRejectedValue(new Error('API error'));
 
     const result = await classifyMessage(mockClient, 'some message');
     expect(result).toBeNull();

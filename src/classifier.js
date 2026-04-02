@@ -11,16 +11,18 @@ Respond with ONLY valid JSON, no other text:
 - Price change detected: {"isPriceChange": true, "oldPrice": <number>, "newPrice": <number>}
 - Not a price change: {"isPriceChange": false}`;
 
-async function classifyMessage(anthropicClient, messageText) {
+async function classifyMessage(openaiClient, messageText) {
   try {
-    const response = await anthropicClient.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+    const response = await openaiClient.chat.completions.create({
+      model: 'gpt-4o-mini',
       max_tokens: 100,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: messageText }],
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: messageText },
+      ],
     });
 
-    const text = response.content[0].text.trim();
+    const text = response.choices[0].message.content.trim();
     const parsed = JSON.parse(text);
 
     if (parsed.isPriceChange && typeof parsed.oldPrice === 'number' && typeof parsed.newPrice === 'number') {

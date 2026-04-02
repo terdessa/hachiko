@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(git pull:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(git -C /c/Projects/hachiko branch)",
+      "Bash(npx jest:*)",
+      "Bash(git -C /c/Projects/hachiko add src/messages.js tests/messages.test.js)",
+      "Bash(git -C:*)",
+      "Bash(node:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
