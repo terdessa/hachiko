@@ -1,0 +1,33 @@
+{
+  "name": "hachiko",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terdessa/hachiko.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/terdessa/hachiko/issues"
+  },
+  "homepage": "https://github.com/terdessa/hachiko#readme",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "@slack/bolt": "^4.6.0",
+    "dotenv": "^17.4.0"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0"
+  }
+}
