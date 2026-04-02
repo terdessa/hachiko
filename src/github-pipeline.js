@@ -37,12 +37,12 @@ async function createPriceUpdatePR(octokit, { oldPrice, newPrice, owner, repo, t
   const currentContent = Buffer.from(fileData.content, 'base64').toString('utf8');
 
   // 5. Replace price
-  const oldPattern = `const price = ${oldPrice};`;
+  const oldPattern = `export const PRICE_USD = ${oldPrice};`;
   if (!currentContent.includes(oldPattern)) {
     throw new Error(`Price value "${oldPattern}" not found in ${targetFile}`);
   }
 
-  const newContent = currentContent.replace(oldPattern, `const price = ${newPrice};`);
+  const newContent = currentContent.replace(oldPattern, `export const PRICE_USD = ${newPrice};`);
 
   // 6. Commit the change
   await octokit.repos.createOrUpdateFileContents({

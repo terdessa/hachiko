@@ -9,7 +9,7 @@ describe('createPriceUpdatePR', () => {
         getContent: jest.fn().mockResolvedValue({
           data: {
             sha: 'file-sha-123',
-            content: Buffer.from('const price = 15;\ndocument.getElementById("price").textContent = `$${price}`;').toString('base64'),
+            content: Buffer.from('export const PRICE_USD = 15;\n').toString('base64'),
           },
         }),
         getBranch: jest.fn().mockResolvedValue({
@@ -24,7 +24,7 @@ describe('createPriceUpdatePR', () => {
       pulls: {
         create: jest.fn().mockResolvedValue({
           data: {
-            html_url: 'https://github.com/terdessa/hachiko-demo/pull/42',
+            html_url: 'https://github.com/terdessa/hachiko-demo-repo/pull/42',
             number: 42,
           },
         }),
@@ -37,11 +37,11 @@ describe('createPriceUpdatePR', () => {
       oldPrice: 15,
       newPrice: 20,
       owner: 'terdessa',
-      repo: 'hachiko-demo',
-      targetFile: 'script.js',
+      repo: 'hachiko-demo-repo',
+      targetFile: 'src/price.js',
     });
 
-    expect(result.prUrl).toBe('https://github.com/terdessa/hachiko-demo/pull/42');
+    expect(result.prUrl).toBe('https://github.com/terdessa/hachiko-demo-repo/pull/42');
     expect(result.prNumber).toBe(42);
     expect(result.branchName).toContain('hachiko/update-price');
     expect(result.summary).toContain('15');
@@ -53,21 +53,21 @@ describe('createPriceUpdatePR', () => {
       oldPrice: 15,
       newPrice: 20,
       owner: 'terdessa',
-      repo: 'hachiko-demo',
-      targetFile: 'script.js',
+      repo: 'hachiko-demo-repo',
+      targetFile: 'src/price.js',
     });
 
     const putCall = mockOctokit.repos.createOrUpdateFileContents.mock.calls[0][0];
     const newContent = Buffer.from(putCall.content, 'base64').toString('utf8');
-    expect(newContent).toContain('const price = 20;');
-    expect(newContent).not.toContain('const price = 15;');
+    expect(newContent).toContain('export const PRICE_USD = 20;');
+    expect(newContent).not.toContain('export const PRICE_USD = 15;');
   });
 
   test('throws if old price not found in file', async () => {
     mockOctokit.repos.getContent.mockResolvedValue({
       data: {
         sha: 'file-sha-123',
-        content: Buffer.from('const price = 99;').toString('base64'),
+        content: Buffer.from('export const PRICE_USD = 99;').toString('base64'),
       },
     });
 
@@ -90,8 +90,8 @@ describe('createPriceUpdatePR', () => {
       oldPrice: 15,
       newPrice: 20,
       owner: 'terdessa',
-      repo: 'hachiko-demo',
-      targetFile: 'script.js',
+      repo: 'hachiko-demo-repo',
+      targetFile: 'src/price.js',
     });
 
     expect(mockOctokit.git.deleteRef).toHaveBeenCalled();

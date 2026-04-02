@@ -21,6 +21,6 @@ module.exports = {
   githubAppInstallationId: process.env.GITHUB_APP_INSTALLATION_ID,
   githubAppPrivateKey,
   githubOwner: process.env.GITHUB_OWNER || 'terdessa',
-  githubRepo: process.env.GITHUB_REPO || 'hachiko-demo',
-  githubTargetFile: process.env.GITHUB_TARGET_FILE || 'script.js',
+  githubRepo: process.env.GITHUB_REPO || 'hachiko-demo-repo',
+  githubTargetFile: process.env.GITHUB_TARGET_FILE || 'src/price.js',
 };
